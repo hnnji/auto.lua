@@ -1,1 +1,31 @@
+-- 🛢️ Auto Collect System (Generated with Sigma Spy)
+-- GitHub: https://github.com/depthso/Sigma-Spy
 
+-- Services
+local Players = game:GetService("Players")
+
+-- Variables
+local player = Players.LocalPlayer
+local char = player.Character or player.CharacterAdded:Wait()
+local HumanoidRootPart = char:WaitForChild("HumanoidRootPart")
+
+-- Remote Reference (wait for tool to load)
+local function getCollectRemote()
+    local tool = char:FindFirstChildOfClass("Tool") or player.Backpack:FindFirstChildOfClass("Tool")
+    if tool and tool:FindFirstChild("CollectorScripts") and tool.CollectorScripts:FindFirstChild("Server") then
+        return tool.CollectorScripts.Server:FindFirstChild("Collect")
+    end
+end
+
+-- Auto Collect Loop
+local autoCollect = true
+task.spawn(function()
+    task.wait(1) -- 🔁 Wait 1 second before starting collection
+    while autoCollect do
+        local collectRemote = getCollectRemote()
+        if collectRemote then
+            collectRemote:FireServer(HumanoidRootPart)
+        end
+        task.wait(1) -- 🔁 Wait 1 second between each collect
+    end
+end)
